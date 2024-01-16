@@ -1,5 +1,7 @@
 program hello_openmp
-    ! compile and run with: gfortran -fopenmp hello_openmp.f90 -o hello_openmp.exe && ./hello_openmp.exe
+    ! compile and run with:
+    !   $ ftn -h omp hello_openmp.f90 -o hello_openmp.exe
+    !   $ ./hello_openmp.exe
     use omp_lib
 
     implicit none

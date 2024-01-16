@@ -1,5 +1,7 @@
 program hello_mpi
-    ! compile and run with: mpifort hello_mpi.f90 -o hello_mpi.exe && mpirun -n 4 ./hello_mpi.exe
+    ! compile and run with:
+    !   $ ftn hello_mpi.f90 -o hello_mpi.exe
+    !   $ srun -N 1 -n 4 -t 00:00:10 --account=your_project --qos=debug --constraint=cpu ./hello_mpi.exe
     use mpi_f08
 
     implicit none
