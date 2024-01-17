@@ -1,6 +1,6 @@
 program array_operations
     ! Compile with:
-    !   $ ftn -hS -O3 array_operations.f90
+    !   $ ftn -S -O3 array_operations.f90
     ! or compile and run with:
     !   $ ftn -O3 array_operations.f90 -o array_operations.exe
     !   $ ./array_operations.exe

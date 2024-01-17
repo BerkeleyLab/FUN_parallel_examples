@@ -1,6 +1,6 @@
 program separate_loops
     ! Compile with:
-    !   $ ftn -hS -O3 separate_loops.f90
+    !   $ ftn -S -O3 separate_loops.f90
     ! or compile and run with:
     !   $ ftn -O3 separate_loops.f90 -o separate_loops.exe
     !   $ ./separate_loops.exe

@@ -1,6 +1,6 @@
 program single_loop
     ! Compile with:
-    !   $ ftn -hS -O3 single_loop.f90
+    !   $ ftn -S -O3 single_loop.f90
     ! or compile and run with
     !   $ ftn -O3 single_loop.f90 -o single_loop.exe
     !   $ ./single_loop.exe
