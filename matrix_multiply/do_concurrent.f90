@@ -33,6 +33,7 @@ contains
         if (size(b,2) /= size(c,2)) error stop "b and c must have same number of columns"
         if (size(a,2) /= size(b,1)) error stop "a must have same number of columns as b has number of rows"
 
+        c=0.
         do concurrent(i = 1:size(a,1), j = 1:size(b,2), k = 1:size(a,2)) reduce(+:c)
                     c(i, j) = c(i, j) + a(i,k)*b(k,j)
         end do
