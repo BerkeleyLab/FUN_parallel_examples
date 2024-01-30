@@ -1,4 +1,7 @@
 program serial
+    ! compile and run with:
+    !   $ ftn serial.f90 -o serial.exe
+    !   $ ./serial.exe
     use iso_fortran_env, only: int64
     implicit none
 

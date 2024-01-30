@@ -1,4 +1,7 @@
 program openmp
+    ! compile and run with:
+    !   $ ftn -h omp openmp.f90 -o openmp.exe
+    !   $ ./openmp.exe
     use iso_fortran_env, only: int64
     implicit none
 

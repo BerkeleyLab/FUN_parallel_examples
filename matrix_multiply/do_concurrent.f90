@@ -1,4 +1,7 @@
 program do_concurrent
+    ! compile and run with:
+    !   $ ftn -h thread_do_concurrent do_concurrent.f90 -o do_concurrent.exe
+    !   $ ./do_concurrent.exe
     use iso_fortran_env, only: int64
     implicit none
 
