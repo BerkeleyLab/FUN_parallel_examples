@@ -1,7 +1,10 @@
 program coarray_burgers_solver
+    ! compile and run with:
+    !   $ ftn coarrays.f90 -o coarrays.exe
+    !   $ srun -N 1 -n 4 -t 00:00:10 --account=your_project --qos=debug --constraint=cpu ./coarrays.exe
     implicit none
 
-    real, parameter :: nu=1., final_time=0.1, tolerance=1.e-3, safety_factor=0.1
+    real, parameter :: nu=1., final_time=0.1, safety_factor=0.1
     integer, parameter :: nodes=240
     real, allocatable :: u(:)[:], u_half(:)[:], half_uu(:)[:]
     real :: dx, dt, time
@@ -72,7 +75,7 @@ contains
     end subroutine
 
     pure function d_dx(global_field, dx)
-        real, intent(in) :: global_field(:)[*]
+        real, allocatable, intent(in) :: global_field(:)[:]
         real, intent(in) :: dx
         real :: d_dx(size(global_field))
 
@@ -92,7 +95,7 @@ contains
     end function
 
     pure function d_dx2(global_field, dx)
-        real, intent(in) :: global_field(:)[*]
+        real, allocatable, intent(in) :: global_field(:)[:]
         real, intent(in) :: dx
         real :: d_dx2(size(global_field))
 

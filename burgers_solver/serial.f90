@@ -1,4 +1,7 @@
 program serial_burgers_solver
+    ! compile and run with:
+    !   $ ftn serial.f90 -o serial.exe
+    !   $ ./serial.exe
     implicit none
 
     real, parameter :: nu=1., final_time=0.1, tolerance=1.e-3, safety_factor=0.1
