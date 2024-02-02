@@ -6,7 +6,7 @@ program mpi_burgers_solver
 
     implicit none
 
-    real, parameter :: nu=1., final_time=0.1, tolerance=1.e-3, safety_factor=0.1
+    real, parameter :: nu=1., final_time=0.1, safety_factor=0.1
     integer, parameter :: nodes=240
     real, allocatable :: u(:), u_half(:), half_uu(:), tmp_d_dx(:), tmp_d_dx2(:)
     real :: dx, dt, time
