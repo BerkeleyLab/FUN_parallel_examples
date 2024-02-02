@@ -14,16 +14,16 @@ program serial_burgers_solver
     allocate(u_half(size(u)), half_uu(size(u)))
     dt = safety_factor * diffusion_stability_limit(nu, dx, order_of_accuracy=2)
     do while (time < final_time)
-        half_uu = 0.5*u**2
-        u_half = u + (dt/2)*(nu*d_dx2(u,dx) - d_dx(half_uu,dx))
-        half_uu = 0.5*u_half**2
-        u = u + dt*(nu*d_dx2(u_half,dx) - d_dx(half_uu,dx))
+        half_uu(:) = 0.5*u**2
+        u_half(:) = u + (dt/2)*(nu*d_dx2(u,dx) - d_dx(half_uu,dx))
+        half_uu(:) = 0.5*u_half**2
+        u(:) = u + dt*(nu*d_dx2(u_half,dx) - d_dx(half_uu,dx))
         time = time + dt
     end do
     print *, "u = ", u
 contains
     subroutine init(global_field, initial_function, num_points, dx)
-        real, allocatable, intent(inout) :: global_field(:)
+        real, allocatable, intent(out) :: global_field(:)
         interface
             pure function initial_function(x)
                 implicit none
