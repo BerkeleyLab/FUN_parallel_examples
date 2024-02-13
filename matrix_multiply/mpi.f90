@@ -6,7 +6,7 @@ program mpi
     use mpi_f08
     implicit none
 
-    integer, parameter :: n = 200, m = 300, k = 400, num_cycles = 100
+    integer, parameter :: n = 2, m = 2, k = 2, num_cycles = 1
     real :: a(n, k), b(k, m), c(n, m)
     integer :: i, seed_size, nproc, me, stat
     integer(int64) :: begin, finish, rate, count_max, elapsed
@@ -33,7 +33,7 @@ program mpi
         elapsed = finish - begin
         if (elapsed < 0) elapsed = elapsed + count_max
 
-        print *, c(1,1) ! sanity check and prevent optimizing away calculations
+        print *, c ! sanity check and prevent optimizing away calculations
         print *, "Took: ", real(elapsed) / rate, " seconds"
     end if
     call mpi_finalize(stat)
@@ -60,6 +60,6 @@ contains
                 end do
             end do
         end do
-        call mpi_reduce(local_c, c, size(c), mpi_real, mpi_sum, 0, mpi_comm_world, stat)
+        call mpi_allreduce(local_c, c, size(c), mpi_real, mpi_sum, mpi_comm_world, stat)
     end subroutine
 end program

@@ -5,7 +5,7 @@ program serial
     use iso_fortran_env, only: int64
     implicit none
 
-    integer, parameter :: n = 200, m = 300, k = 400, num_cycles = 100
+    integer, parameter :: n = 2, m = 2, k = 2, num_cycles = 1
     real :: a(n, k), b(k, m), c(n, m)
     integer :: i, seed_size, me, nproc
     integer(int64) :: begin, finish, rate, count_max, elapsed
@@ -31,7 +31,7 @@ program serial
         elapsed = finish - begin
         if (elapsed < 0) elapsed = elapsed + count_max
 
-        print *, c(1,1) ! sanity check and prevent optimizing away calculations
+        print *, c ! sanity check and prevent optimizing away calculations
         print *, "Took: ", real(elapsed) / rate, " seconds"
     end if
 contains
@@ -55,6 +55,6 @@ contains
                 end do
             end do
         end do
-        call co_sum(c, 1)
+        call co_sum(c)
     end subroutine
 end program
