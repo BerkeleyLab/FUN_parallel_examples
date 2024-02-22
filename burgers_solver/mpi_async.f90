@@ -1,7 +1,7 @@
-program mpi_burgers_solver
+program mpi_async_burgers_solver
     ! compile and run with:
-    !   $ ftn mpi.f90 -o mpi.exe
-    !   $ srun -N 1 -n 4 -t 00:00:10 --account=your_project --qos=debug --constraint=cpu ./mpi.exe
+    !   $ ftn mpi_async.f90 -o mpi_async.exe
+    !   $ srun -N 1 -n 4 -t 00:00:10 --account=your_project --qos=debug --constraint=cpu ./mpi_async.exe
     use mpi_f08
 
     implicit none
@@ -70,23 +70,26 @@ contains
         integer :: i
         real :: left_border, right_border
         type(mpi_status) :: stat
+        type(mpi_request) :: left_send, right_send, left_recv, right_recv
 
         associate(num_local_points => size(global_field))
             associate( &
                     left_neighbor => merge(nproc-1, me-1, me == 0), &
                     right_neighbor => merge(0, me+1, me==nproc-1))
-                if (me < nproc-1) call mpi_send(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world)
-                call mpi_recv(left_border, 1, MPI_REAL, left_neighbor, 0, mpi_comm_world, stat)
-                if (me == nproc-1) call mpi_send(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world)
-                if (me > 0) call mpi_send(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world)
-                call mpi_recv(right_border, 1, MPI_REAL, right_neighbor, 1, mpi_comm_world, stat)
-                if (me == 0) call mpi_send(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world)
+                call mpi_irecv(left_border, 1, MPI_REAL, left_neighbor, 0, mpi_comm_world, left_recv)
+                call mpi_irecv(right_border, 1, MPI_REAL, right_neighbor, 1, mpi_comm_world, right_recv)
+                call mpi_isend(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world, right_send)
+                call mpi_isend(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world, left_send)
             end associate
-            d_dx(1) = (global_field(2) - left_border) / (2*dx)
             do i = 2, num_local_points-1
                 d_dx(i) = (global_field(i+1) - global_field(i-1)) / (2*dx)
             end do
+            call mpi_wait(left_recv, stat)
+            d_dx(1) = (global_field(2) - left_border) / (2*dx)
+            call mpi_wait(right_recv, stat)
             d_dx(num_local_points) = (right_border - global_field(num_local_points-1)) / (2*dx)
+            call mpi_wait(right_send, stat)
+            call mpi_wait(left_send, stat)
         end associate
     end function
 
@@ -99,27 +102,30 @@ contains
         integer :: i
         real :: left_border, right_border
         type(mpi_status) :: stat
+        type(mpi_request) :: left_send, right_send, left_recv, right_recv
 
         associate(num_local_points => size(global_field))
             associate( &
                     left_neighbor => merge(nproc-1, me-1, me == 0), &
                     right_neighbor => merge(0, me+1, me==nproc-1))
-                if (me < nproc-1) call mpi_send(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world)
-                call mpi_recv(left_border, 1, MPI_REAL, left_neighbor, 0, mpi_comm_world, stat)
-                if (me == nproc-1) call mpi_send(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world)
-                if (me > 0) call mpi_send(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world)
-                call mpi_recv(right_border, 1, MPI_REAL, right_neighbor, 1, mpi_comm_world, stat)
-                if (me == 0) call mpi_send(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world)
+                call mpi_irecv(left_border, 1, MPI_REAL, left_neighbor, 0, mpi_comm_world, left_recv)
+                call mpi_irecv(right_border, 1, MPI_REAL, right_neighbor, 1, mpi_comm_world, right_recv)
+                call mpi_isend(global_field(num_local_points), 1, MPI_REAL, right_neighbor, 0, mpi_comm_world, right_send)
+                call mpi_isend(global_field(1), 1, MPI_REAL, left_neighbor, 1, mpi_comm_world, left_send)
             end associate
-            d_dx2(1) = (global_field(2) &
-                    - 2*global_field(1) &
-                    + left_border) / dx**2
             do i = 2, num_local_points-1
                 d_dx2(i) = (global_field(i+1) - 2*global_field(i) + global_field(i-1)) / dx**2
             end do
+            call mpi_wait(left_recv, stat)
+            d_dx2(1) = (global_field(2) &
+                    - 2*global_field(1) &
+                    + left_border) / dx**2
+            call mpi_wait(right_recv, stat)
             d_dx2(num_local_points) = (right_border &
                     - 2*global_field(num_local_points) &
                     + global_field(num_local_points-1)) / dx**2
+            call mpi_wait(right_send, stat)
+            call mpi_wait(left_send, stat)
         end associate
     end function
 
